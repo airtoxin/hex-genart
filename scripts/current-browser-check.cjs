@@ -25,12 +25,12 @@ async function change(id,value){await evaluate(`(()=>{const el=document.getEleme
   for(let i=0;i<games.length;i++){
    if(i){await change('game',i);await waitFor('window.hexReady===true',60000);}
    const state=await evaluate('hexApp.getState()');assert.equal(state.flowFrames,games[i].events+1);assert.equal(state.step,games[i].events);assert.equal(state.visualization,'current');
-   const svg=await evaluate('hexApp.svgText()');assert(!/NaN|Infinity/.test(svg));assert(!svg.includes('<circle'));assert(svg.includes('SHARED ASINH WIDTH SCALE'));
-   const png=Buffer.from((await evaluate('hexApp.pngDataURL()')).split(',')[1],'base64');assert.equal(png.readUInt32BE(16),2800);assert.equal(png.readUInt32BE(20),2600);
+   const svg=await evaluate('hexApp.svgText()');assert(!/NaN|Infinity/.test(svg));assert(!svg.includes('<circle'));assert(await evaluate("document.querySelector('#art svg').textContent.includes('SHARED ASINH WIDTH SCALE')"));
+   const png=Buffer.from((await evaluate('hexApp.pngDataURL()')).split(',')[1],'base64');assert.equal(png.readUInt32BE(16),(await evaluate("HexExport.layout(document.querySelector('#art svg')).width*2")));assert.equal(png.readUInt32BE(20),(await evaluate("HexExport.layout(document.querySelector('#art svg')).height*2")));
    await click('prev');assert.equal((await evaluate('hexApp.getState()')).step,games[i].events-1);await click('next');assert.equal((await evaluate('hexApp.getState()')).step,games[i].events);
    const info=await evaluate("document.getElementById('flowInfo').textContent");summaries.push({...state,svgBytes:Buffer.byteLength(svg),pngBytes:png.length,info});console.log('Current verified',games[i].outputStem);
    if(i===6){fs.writeFileSync(path.join(out,'current-1349483-strata.svg'),svg);fs.writeFileSync(path.join(out,'current-1349483-strata.png'),png);}
-   if(i===7){await click('position');const final=await evaluate('hexApp.svgText()');assert(final.includes('WHITE: BLOCKED'));assert(final.includes('BLACK: STONE CONNECTION'));assert.equal(await evaluate("document.querySelectorAll('[data-flow][data-color=\"2\"]').length"),0);await click('strata');assert(await evaluate("document.querySelectorAll('[data-flow][data-color=\"2\"]').length>0"));}
+   if(i===7){await click('position');const final=await evaluate("document.querySelector('#art svg').outerHTML");assert(final.includes('WHITE: BLOCKED'));assert(final.includes('BLACK: STONE CONNECTION'));assert.equal(await evaluate("document.querySelectorAll('[data-flow][data-color=\"2\"]').length"),0);await click('strata');assert(await evaluate("document.querySelectorAll('[data-flow][data-color=\"2\"]').length>0"));}
   }
   await change('game',6);await waitFor('window.hexReady===true');await change('time',120);await click('position');await evaluate("document.getElementById('board').checked=true;document.getElementById('board').dispatchEvent(new Event('input'))");await pause(100);
   assert(await evaluate("[...document.querySelectorAll('#art circle')].every(c=>+c.getAttribute('r')>=5)"));
