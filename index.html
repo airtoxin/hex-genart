@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hex Strata — 一局を、一枚の地層に</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<aside>
+ <header><span class="eyebrow">HEX GAME RECORDS / FIELD NOTES</span><h1>Hex Strata<span>一局を、一枚の地層に。</span></h1><p class="intro">つながりかけた道も、閉ざされた道も。<br>二つの岸をめざす、一局の記憶。</p></header>
+ <section><label for="game">01 / 棋譜を選ぶ</label><select id="game"></select><p id="meta" class="meta"></p></section>
+ <section><label>02 / 時間をたどる</label><div class="transport"><button id="prev" aria-label="一手戻る">←</button><button id="play">自動再生</button><button id="next" aria-label="一手進む">→</button><button id="all">全局</button></div><input id="time" type="range" min="0" value="0" aria-label="表示する手順"><div class="time-label"><span id="step">0 / 0</span><span id="event">開始局面</span></div></section>
+ <section><label>03 / 接続を読む</label><div class="segmented"><button id="contour" class="selected" aria-pressed="true">等高線</button><button id="current" aria-pressed="false">電流の流れ</button></div><p class="small">等高線は電位の形。電流は両岸間の通りやすい経路。</p><label>時間の重ね方</label><div class="segmented"><button id="strata" class="selected" aria-pressed="true">積層</button><button id="position" aria-pressed="false">現在の一層</button></div><div class="range-label"><label for="history">履歴の濃度</label><output id="historyValue">65%</output></div><input id="history" type="range" min="10" max="100" value="65"><div class="range-label"><label for="density" id="densityLabel">線密度</label><output id="densityValue">18</output></div><input id="density" type="range" min="8" max="30" value="18" step="2"><label class="toggle"><input type="checkbox" id="board">盤面と実際の石を重ねる</label></section>
+ <section class="export"><button id="svg">SVG 保存 ↗</button><button id="png">PNG 保存 ↗</button></section>
+ <p class="small"><i class="dot black"></i>黒の上下接続　<i class="dot white"></i>白の左右接続</p><p id="connection" class="small"></p><p id="flowInfo" class="small" hidden></p><p class="small">電流：相手石は通りません。空点を通る流れは潜在経路です。太さは二色・全手順で共通尺度。勝率や、仮想接続・パーコレーションによる勝ち判定ではありません。</p>
+ <details><summary>線の意味と棋譜の扱い</summary><p>電流モードは両岸に電位差1を与え、自石0.04・空点1の有限抵抗で計算します。相手石を除去した別の回路です。流線は辺電流を両岸間の経路に分けたもの。経路分解は一意ではなく、最善手ではありません。角を丸めても元の隣接辺に沿います。</p><p>流線密度を下げると小さい流れを省略しますが、全体の通りやすさには全電流を含めます。太さは空盤全電流÷盤幅を基準とする共通のasinh尺度。下の推移図も二色共通のlog(1+通りやすさ)軸です。実際の石連結は別途表示します。</p><p>各局面の抵抗ネットワークから等電位線を描き、両者を同じ重みで重ねます。古い層も残るため、可能性が移り変わった跡が見えます。</p><p>自石の抵抗率 0.04、空点 1、相手石 2000。相手石のごく小さな導通は数値計算のための近似です。曲線は補間した等電位線で、合法な石の連結・勝率・最善手を示しません。</p><p>SGF の最初の分岐を主譜として読み、投了・IP で停止します。検討変化は描きません。swap-pieces は色交換＋座標転置。作品の二色は盤上の黒白に対応します。</p><p><a href="https://www.red-bean.com/sgf/hex.html" target="_blank" rel="noreferrer">Hex SGF 仕様</a> · <a href="README.md">実装と検証記録</a></p></details>
+ <details><summary>この局の原記録</summary><p id="sourceInfo"></p><a id="source" target="_blank" rel="noreferrer">出典の SGF ↗</a><pre id="comment"></pre></details>
+ <footer>LOCAL STUDY / 2026<br>盤面は記録された終局のまま。</footer>
+</aside>
+<main><div class="canvas-header"><span>CONNECTION LANDSCAPES</span><span id="status" role="status" aria-live="polite">準備中</span></div><div id="art" class="art"></div><div class="canvas-footer"><span>静けさのなかに、すべての手を残す。</span><span>TEAL / CLAY / TIME</span></div></main>
+<script src="src/core.js"></script><script src="src/art.js"></script><script src="src/current.js"></script><script src="src/current-art.js"></script><script src="data/games.js"></script><script src="src/app.js"></script>
+</body></html>

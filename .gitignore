@@ -1,0 +1,14 @@
+# Third-party records, generated art, local metadata, and development caches stay local.
+/data/raw/
+/data/source-pages/
+/data/games.js
+/data/selected.json
+/data/fetch-log.json
+/outputs/
+/research/
+/node_modules/
+.env
+.env.*
+*.log
+.tmp/
+__pycache__/
